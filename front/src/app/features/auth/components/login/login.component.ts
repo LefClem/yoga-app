@@ -42,7 +42,7 @@ export class LoginComponent {
     const loginRequest = this.form.value as LoginRequest;
     this.authService.login(loginRequest).subscribe({
       next: (response: SessionInformation) => {
-        this.sessionService.logIn(response);
+        this.sessionService.logIn(response); 
         this.router.navigate(['/sessions']);
       },
       error: error => this.onError = true,

@@ -41,3 +41,115 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+
+declare namespace Cypress {
+    interface Chainable {
+        login(email: string, password: string): void;
+    }
+}
+
+Cypress.Commands.add('login', (email, password) => {
+    cy.visit('/login');
+    cy.get('input[formControlName=email]').type(email);
+    cy.get('input[formControlName=password]').type(`${password}{enter}{enter}`);
+});
+
+Cypress.Commands.add('interceptSessions', () => {
+    cy.intercept('GET', '/api/session', req => {
+        req.reply({
+            statusCode: 200,
+            body: [{
+                createdAt: "2025-01-03T17:13:30",
+                date: "2025-02-27T00:00:00.000+00:00",
+                description: "Session de découverte",
+                id: 1,
+                name: "Session Lunel",
+                teacher_id: 2,
+                updatedAt: "2025-01-17T09:28:27",
+                users: []
+            },
+            {
+                createdAt: "2025-01-03T17:15:12",
+                date: "2025-03-06T00:00:00.000+00:00",
+                description: "Venez si vous avez déjà participé à une session",
+                id: 2,
+                name: "Session confirmée Montpellier",
+                teacher_id: 1,
+                updatedAt: "2025-01-17T09:28:21",
+                users: []
+            }
+            ]
+        })
+    }).as('sessionRequest');
+})
+
+Cypress.Commands.add('interceptSession', () => {
+    cy.intercept('GET', '/api/session/1', req => {
+        req.reply({
+            statusCode: 200,
+            body: {
+                createdAt: "2025-01-03T17:13:30",
+                date: "2025-02-27T00:00:00.000+00:00",
+                description: "Session de découverte",
+                id: 1,
+                name: "Session Lunel",
+                teacher_id: 1,
+                updatedAt: "2025-01-17T09:28:27",
+                users: []
+            }
+        })
+    })
+})
+
+Cypress.Commands.add('interceptCreateSessions', () => {
+    cy.intercept('GET', '/api/session', req => {
+        req.reply({
+            statusCode: 200,
+            body: [{
+                createdAt: "2025-01-03T17:13:30",
+                date: "2025-02-27T00:00:00.000+00:00",
+                description: "Session de découverte",
+                id: 1,
+                name: "Session Lunel",
+                teacher_id: 2,
+                updatedAt: "2025-01-17T09:28:27",
+                users: []
+            },
+            {
+                createdAt: "2025-01-03T17:15:12",
+                date: "2025-03-06T00:00:00.000+00:00",
+                description: "Venez si vous avez déjà participé à une session",
+                id: 2,
+                name: "Session confirmée Montpellier",
+                teacher_id: 1,
+                updatedAt: "2025-01-17T09:28:21",
+                users: []
+            },
+            {
+                createdAt: "2025-02-22T17:13:30",
+                date: "2025-02-22T00:00:00.000+00:00",
+                description: "une super session !",
+                id: 3,
+                name: "Session de yoga sur Avignon",
+                teacher_id: 1,
+                updatedAt: "2025-02-22T17:13:30",
+                users: []
+            }
+            ]
+        })
+    }).as('sessionRequest');
+})
+
+Cypress.Commands.add('interceptIsAdmin', (admin: boolean) => {
+    cy.intercept('GET', '/api/user/1', {
+        body: {
+            id: 1,
+            email: "yoga@studio.com",
+            lastName: "Admin",
+            firstName: "Admin",
+            admin: admin,
+            createdAt: "2025-01-02T22:46:51",
+            updatedAt: "2025-01-02T22:46:51"
+        },
+    });
+});
