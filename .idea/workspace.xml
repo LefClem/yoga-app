@@ -5,15 +5,28 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="671ffb4a-f98d-49be-9a99-def130a47ce3" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/yoga-app.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/features/auth/components/login/login.component.spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/features/auth/components/login/login.component.spec.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/app/features/auth/components/register/register.component.spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/features/auth/components/register/register.component.spec.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vscode/settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/.vscode/settings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/.nyc_output/out.json" beforeDir="false" afterPath="$PROJECT_DIR$/front/.nyc_output/out.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/cypress/e2e/auth/login.cy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/cypress/e2e/auth/login.cy.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/cypress/e2e/auth/logout.cy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/cypress/e2e/auth/logout.cy.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/cypress/e2e/sessions/session-create.cy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/cypress/e2e/sessions/session-create.cy.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/cypress/e2e/sessions/session-details.cy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/cypress/e2e/sessions/session-details.cy.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/cypress/e2e/sessions/session-edit.cy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/cypress/e2e/sessions/session-edit.cy.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/cypress/e2e/sessions/sessions.cy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/cypress/e2e/sessions/sessions.cy.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/cypress/e2e/user/me.cy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/cypress/e2e/user/me.cy.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/cypress/screenshots/sessions/session-create.cy.ts/Session creation specs -- should create a session (failed).png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/cypress/support/commands.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/cypress/support/commands.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/front/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/front/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/app/components/me/me.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/components/me/me.component.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/app/features/sessions/components/detail/detail.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/features/sessions/components/detail/detail.component.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/app/features/sessions/components/form/form.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/features/sessions/components/form/form.component.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/front/yarn.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/generated-sources/annotations/com/openclassrooms/starterjwt/mapper/SessionMapperImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/generated-sources/annotations/com/openclassrooms/starterjwt/mapper/TeacherMapperImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/generated-sources/annotations/com/openclassrooms/starterjwt/mapper/UserMapperImpl.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -32,20 +45,20 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.SpringBootSecurityJwtApplication.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "origin",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/Users/clement/Desktop/yoga-app",
-    "project.structure.last.edited": "Project",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "reference.projectsettings.compiler.annotationProcessors"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.SpringBootSecurityJwtApplication.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;origin&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/clement/Desktop/yoga-app&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.projectsettings.compiler.annotationProcessors&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="SpringBootSecurityJwtApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="ALTERNATIVE_JRE_PATH" value="17" />

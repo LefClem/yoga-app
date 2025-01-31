@@ -2,7 +2,8 @@ describe('Session edit specs', () => {
     it('should display edit button and edit form when admin', () => {
         cy.interceptSessions();
         cy.interceptSession();
-        cy.login('yoga@studio.com', 'test!1234');
+        cy.interceptTeacher();
+        cy.loginWithAdminStatus('yoga@studio.com', 'test!1234', true);
 
         cy.get('[data-test-id="edit-button"]').should('exist');
         cy.get('[data-test-id="edit-button"]').first().click();

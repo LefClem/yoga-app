@@ -48,7 +48,20 @@ declare namespace Cypress {
     }
 }
 
-Cypress.Commands.add('login', (email, password) => {
+Cypress.Commands.add('loginWithAdminStatus', (email, password, admin) => {
+    cy.intercept('POST', '/api/auth/login', (req) => {
+        req.reply({
+          statusCode: 200,
+          body: {
+            id: 1,
+            username: 'userName',
+            firstName: 'firstName',
+            lastName: 'lastName',
+            admin: admin
+          },
+        });
+      }).as('loginRequest');
+
     cy.visit('/login');
     cy.get('input[formControlName=email]').type(email);
     cy.get('input[formControlName=password]').type(`${password}{enter}{enter}`);
@@ -140,16 +153,26 @@ Cypress.Commands.add('interceptCreateSessions', () => {
     }).as('sessionRequest');
 })
 
-Cypress.Commands.add('interceptIsAdmin', (admin: boolean) => {
-    cy.intercept('GET', '/api/user/1', {
-        body: {
-            id: 1,
-            email: "yoga@studio.com",
-            lastName: "Admin",
-            firstName: "Admin",
-            admin: admin,
-            createdAt: "2025-01-02T22:46:51",
-            updatedAt: "2025-01-02T22:46:51"
-        },
-    });
-});
+Cypress.Commands.add('interceptTeacher', () => {
+    cy.intercept('GET', '/api/teacher', req => {
+        req.reply({
+            statusCode: 200,
+            body: [
+                {
+                    id: 1,
+                    lastName: "DELAHAYE",
+                    firstName: "Margot",
+                    createdAt: "2025-01-20T19:58:57",
+                    updatedAt: "2025-01-20T19:58:57"
+                },
+                {
+                    id: 2,
+                    lastName: "THIERCELIN",
+                    firstName: "Hélène",
+                    createdAt: "2025-01-20T19:58:57",
+                    updatedAt: "2025-01-20T19:58:57"
+                }
+            ]
+        })
+    }).as('teacherRequest');
+})

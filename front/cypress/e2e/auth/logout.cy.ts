@@ -1,6 +1,7 @@
 describe('Logout spec', () => {
     it('should logout successfully', () => {
-        cy.login("yoga@studio.com", "test!1234");
+        cy.interceptSessions();
+        cy.loginWithAdminStatus("yoga@studio.com", "test!1234", true);
 
         cy.url().should('include', '/sessions');
         cy.get('[data-test-id="logout"]').click();

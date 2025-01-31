@@ -1,7 +1,5 @@
 describe('Login spec', () => {
   it('Login successfull', () => {
-    cy.visit('/login')
-
     cy.intercept('POST', '/api/auth/login', (req) => {
       req.reply({
         statusCode: 200,
@@ -14,6 +12,8 @@ describe('Login spec', () => {
         },
       });
     }).as('loginRequest');
+    
+    cy.visit('/login')
 
     cy.intercept(
       {

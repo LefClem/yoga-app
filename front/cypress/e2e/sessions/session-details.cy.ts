@@ -33,8 +33,7 @@ describe('Session detail spec', () => {
     });
 
     it('should show session infos on click on detail button as admin', () => {
-        cy.interceptIsAdmin(true);
-        cy.login('yoga@studio.com', 'test!1234');
+        cy.loginWithAdminStatus('yoga@studio.com', 'test!1234', true);
 
         cy.get('[data-test-id="detail-button"]').first().click();
 
@@ -47,18 +46,26 @@ describe('Session detail spec', () => {
     });
 
     it('should delete session on click on delete button as admin', () => {
-        cy.interceptIsAdmin(true);
-        cy.login('yoga@studio.com', 'test!1234');
+        cy.intercept('DELETE', '/api/session/1', req => {
+            req.reply({
+                statusCode: 200
+            })
+        }).as('deleteRequest');
+
+        cy.loginWithAdminStatus('yoga@studio.com', 'test!1234', true);
 
         cy.get('[data-test-id="detail-button"]').first().click();
         cy.url().should('include', '/sessions/detail/1');
         cy.get('[data-test-id="delete-button"]').click();
+        cy.wait('@deleteRequest').then(interception => {
+            expect(interception.response.statusCode).to.eq(200);
+        });
 
         cy.url().should('include', '/sessions');
     });
 
     it('should not have delete button on session detail as non admin', () => {
-        cy.login('johndoe@mail.com', 'test!1234');
+        cy.loginWithAdminStatus('johndoe@mail.com', 'test!1234', false);
 
         cy.get('[data-test-id="detail-button"]').first().click();
         cy.url().should('include', '/sessions/detail/1');
@@ -67,11 +74,49 @@ describe('Session detail spec', () => {
     });
 
     it('should have participate button on session detail as non admin', () => {
-        cy.login('johndoe@mail.com', 'test!1234');
+        cy.intercept('POST', '/api/session/1/participate/1', req => {
+            req.reply({
+                statusCode: 200
+            })
+        }).as('participateRequest');
+        cy.interceptSession();
+        cy.loginWithAdminStatus('johndoe@mail.com', 'test!1234', false);
 
         cy.get('[data-test-id="detail-button"]').first().click();
         cy.url().should('include', '/sessions/detail/1');
 
         cy.get('[data-test-id="participate-button"]').should('exist');
+        cy.get('[data-test-id="participate-button"]').click();
+        cy.wait('@participateRequest').then(interception => {
+            expect(interception.response.statusCode).to.eq(200);
+        })
     });
+
+    it('should have a not participate button if user participate to the session already', () => {
+        cy.intercept('DELETE', '/api/session/1/participate/1', req => {
+            req.reply({
+                statusCode: 200
+            })
+        }).as('unParticipateRequest');
+        cy.loginWithAdminStatus('johndoe@mail.com', 'test!1234', false);
+        cy.get('[data-test-id="detail-button"]').first().click();
+        cy.url().should('include', '/sessions/detail/1');
+
+        cy.get('[data-test-id="unParticipate-button"]').should('exist');
+        cy.get('[data-test-id="unParticipate-button"]').click();
+
+        cy.wait('@unParticipateRequest').then(interception => {
+            expect(interception.response.statusCode).to.eq(200);
+        })
+    })
+
+    it('should have a back button', () => {
+        cy.loginWithAdminStatus('johndoe@mail.com', 'test!1234', false);
+        cy.get('[data-test-id="detail-button"]').first().click();
+
+        cy.get('[data-test-id="back-button"]').should('exist');
+        cy.get('[data-test-id="back-button"]').click();
+
+        cy.url().should('include', '/sessions');
+    })
 });

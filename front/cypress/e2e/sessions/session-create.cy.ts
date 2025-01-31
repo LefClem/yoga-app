@@ -1,6 +1,6 @@
 describe('Session creation specs', () => {
     it('Should display the create button and the creation form for admin', () => {
-        cy.login('yoga@studio.com', 'test!1234');
+        cy.loginWithAdminStatus('yoga@studio.com', 'test!1234', true);
         cy.get('[data-test-id="create-button"]').should('exist');
         cy.get('[data-test-id="create-button"]').click();
 
@@ -11,8 +11,24 @@ describe('Session creation specs', () => {
         cy.get('[data-test-id="form-description"]').should('exist');
     })
 
+    it('should display the back button', () => {
+        cy.loginWithAdminStatus('yoga@studio.com', 'test!1234', true);
+        cy.get('[data-test-id="create-button"]').should('exist');
+        cy.get('[data-test-id="create-button"]').click();
+
+        cy.url().should('include', '/sessions/create');
+
+        cy.get('[data-test-id="back-button"]').should('exist');
+        cy.get('[data-test-id="back-button"]').click();
+
+        cy.url().should('include', '/sessions');
+
+    })
+
     it('should create a session', () => {
         cy.interceptCreateSessions();
+        cy.interceptTeacher();
+
         cy.intercept('POST', '/api/session', (req) => {
             req.reply({
                 statusCode: 200,
@@ -29,7 +45,7 @@ describe('Session creation specs', () => {
             })
         }).as('createSession');
 
-        cy.login('yoga@studio.com', 'test!1234');
+        cy.loginWithAdminStatus('yoga@studio.com', 'test!1234', true);
         cy.get('[data-test-id="create-button"]').should('exist');
         cy.get('[data-test-id="create-button"]').click();
 
@@ -62,7 +78,7 @@ describe('Session creation specs', () => {
 
     it('should not display create button if logged user is not admin', () => {
         cy.interceptSessions();
-        cy.login('johndoe@mail.com', 'test!1234');
+        cy.loginWithAdminStatus('johndoe@mail.com', 'test!1234', false);
 
         cy.get('[data-test-id="create-button"]').should('not.exist');
     })

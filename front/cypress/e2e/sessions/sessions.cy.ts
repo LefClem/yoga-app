@@ -1,9 +1,7 @@
 describe('Sessions spec', () => {
     it('Should display the list of session', () => {
-        cy.interceptIsAdmin(true);
         cy.interceptSessions();
-
-        cy.login("yoga@studio.com", "test!1234")
+        cy.loginWithAdminStatus("yoga@studio.com", "test!1234", true)
 
         cy.url().should('include', '/sessions')
 
@@ -35,10 +33,9 @@ describe('Sessions spec', () => {
     })
 
     it('should display create, edit and detail button when admin', () => {
-        cy.interceptIsAdmin(true);
         cy.interceptSessions();
 
-        cy.login("yoga@studio.com", "test!1234")
+        cy.loginWithAdminStatus("yoga@studio.com", "test!1234", true)
 
         cy.get('[data-test-id="create-button"]').should('exist');
         cy.get('[data-test-id="edit-button"]').should('exist');
@@ -46,14 +43,12 @@ describe('Sessions spec', () => {
     })
 
     it('should not display create, edit and detail button when not admin', () => {
-        cy.interceptIsAdmin(false);
         cy.interceptSessions();
-
-        cy.login("yoga@studio.com", "test!1234")
+        cy.loginWithAdminStatus("yoga@studio.com", "test!1234", false)
 
         cy.get('[data-test-id="create-button"]').should('not.exist');
         cy.get('[data-test-id="edit-button"]').should('not.exist');
-        cy.get('[data-test-id="detail-button"]').should('not.exist');
+        cy.get('[data-test-id="detail-button"]').should('exist');
     })
 
 })
