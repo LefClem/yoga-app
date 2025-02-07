@@ -1,0 +1,355 @@
+package com.openclassrooms.starterjwt.controllers;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.openclassrooms.starterjwt.dto.SessionDto;
+import com.openclassrooms.starterjwt.models.Session;
+import com.openclassrooms.starterjwt.models.Teacher;
+import com.openclassrooms.starterjwt.models.User;
+import com.openclassrooms.starterjwt.repository.SessionRepository;
+import com.openclassrooms.starterjwt.repository.TeacherRepository;
+import com.openclassrooms.starterjwt.repository.UserRepository;
+import com.openclassrooms.starterjwt.services.SessionService;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import java.time.LocalDateTime;
+import java.util.Date;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.containsString;
+
+@SpringBootTest
+@AutoConfigureMockMvc
+public class SessionControllerIntegrationTest {
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
+    TeacherRepository teacherRepository;
+
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    SessionRepository sessionRepository;
+
+    @Autowired
+    SessionService sessionService;
+
+    @Autowired
+    ObjectMapper mapper;
+
+    final Teacher mockTeacher=Teacher.builder()
+            .firstName("mockFN")
+            .lastName("mockLN")
+            .build();
+
+    final User mockUser=User.builder()
+            .firstName("Red")
+            .lastName("Mage")
+            .email("red@mage.com")
+            .admin(false)
+            .password("Mage1234!")
+            .build();
+
+    final Session mockSession = Session.builder()
+            .name("Magic Session")
+            .date(new Date())
+            .teacher(mockTeacher)
+            .description("The magic session")
+            .createdAt(LocalDateTime.now())
+            .build();
+
+    @AfterEach
+    void clean() {
+        sessionRepository.deleteAll();
+        userRepository.deleteAll();
+        teacherRepository.deleteAll();
+    }
+
+    @Test
+    @WithMockUser(roles="USER")
+    @DisplayName("Should get all sessions, when authorized user")
+    void testGetAllSessions_ResponseOk() throws Exception {
+        userRepository.save(mockUser);
+        teacherRepository.save(mockTeacher);
+        sessionRepository.save(mockSession);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/session/"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string(containsString("Magic Session")));
+    }
+
+    @Test
+    @WithMockUser(roles="USER")
+    @DisplayName("Should get one session by ID, when authorized user")
+    void testGetOneSessionById_ResponseOk() throws Exception {
+        userRepository.save(mockUser);
+        teacherRepository.save(mockTeacher);
+        Long mockSessionId = sessionRepository.save(mockSession).getId();
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/session/" + mockSessionId))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string(containsString("Magic Session")));
+    }
+
+    @Test
+    @DisplayName("Should throw when getting one session by ID, if unauthorized user")
+    void testGetOneSessionById_UnauthorizedResponse() throws Exception {
+        userRepository.save(mockUser);
+        teacherRepository.save(mockTeacher);
+        Long mockSessionId = sessionRepository.save(mockSession).getId();
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/session/" + mockSessionId))
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser(roles="USER")
+    @DisplayName("Should throw when getting one session by ID, if invalid ID format")
+    void testGetOneSessionById_InvalidIdFormat() throws Exception {
+        String mockSessionId = "invalidID";
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/session/" + mockSessionId))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(roles="USER")
+    @DisplayName("Should throw when getting one session by ID, if ID is not found")
+    void testGetOneSessionById_NotFound() throws Exception {
+        Long mockSessionId = 999L;
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/session/" + mockSessionId))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser(username = "red@mage.com")
+    @DisplayName("Should create session successfully")
+    void testCreateSession_ResponseOk() throws Exception {
+        userRepository.save(mockUser);
+        teacherRepository.save(mockTeacher);
+        sessionRepository.save(mockSession);
+
+        SessionDto createdMockSession = SessionDto.builder()
+                .name("Black Magic Session")
+                .teacher_id(mockTeacher.getId())
+                .date(new Date())
+                .description("That's magic !!!")
+                .build();
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/session")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(createdMockSession))
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    @DisplayName("Should update session successfully")
+    @WithMockUser(username = "red@mage.com")
+    void testUpdateSession_ResponseOk() throws Exception {
+        userRepository.save(mockUser);
+        teacherRepository.save(mockTeacher);
+        Long mockSessionId = sessionRepository.save(mockSession).getId();
+
+        SessionDto updatingMockSession = SessionDto.builder()
+                .name("White Magic Session")
+                .teacher_id(mockTeacher.getId())
+                .date(new Date())
+                .description("That's magic too !!!")
+                .build();
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/session/" + mockSessionId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(updatingMockSession))
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string(containsString("That's magic too !!!")));
+
+    }
+
+    @Test
+    @DisplayName("Should throw when updating session if invalid Id format")
+    @WithMockUser(username = "red@mage.com")
+    void testUpdateSession_InvalidId() throws Exception {
+        userRepository.save(mockUser);
+        teacherRepository.save(mockTeacher);
+        String mockSessionId = "invalid_Id";
+
+        SessionDto updatingMockSession = SessionDto.builder()
+                .name("White Magic Session")
+                .teacher_id(mockTeacher.getId())
+                .date(new Date())
+                .description("That's magic too !!!")
+                .build();
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/session/" + mockSessionId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(updatingMockSession))
+                )
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(username = "red@mage.com")
+    @DisplayName("Should delete session successfully")
+    void testDeleteSession_ResponseOk() throws Exception {
+        userRepository.save(mockUser);
+        teacherRepository.save(mockTeacher);
+        Long mockSessionId = sessionRepository.save(mockSession).getId();
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/session/" + mockSessionId)
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    @WithMockUser(username = "red@mage.com")
+    @DisplayName("Should throw when deleting session if invalid Id format")
+    void testDeleteSession_InvalidId() throws Exception {
+        userRepository.save(mockUser);
+        teacherRepository.save(mockTeacher);
+        String mockSessionId = "invalid_Id";
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/session/" + mockSessionId)
+                )
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(username = "red@mage.com")
+    @DisplayName("Should throw when deleting session if session's Id is not found")
+    void testDeleteSession_IsNotFound() throws Exception {
+        userRepository.save(mockUser);
+        teacherRepository.save(mockTeacher);
+        Long mockSessionId = 99L;
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/session/" + mockSessionId))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser(roles="USER")
+    @DisplayName("Should add user to session successfully if authorized user")
+    void testParticipateToSession_ResponseOk() throws Exception {
+        Long mockUserId = userRepository.save(mockUser).getId();
+        teacherRepository.save(mockTeacher);
+        Long mockSessionId = sessionRepository.save(mockSession).getId();
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/session/" + mockSessionId + "/participate/" + mockUserId))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+        assertThat(sessionRepository.findById(mockSessionId).isPresent()).isTrue();
+        assertThat(sessionRepository.findById(mockSessionId).get().getUsers().contains(mockUser)).isTrue();
+    }
+
+    @Test
+    @WithMockUser(roles="USER")
+    @DisplayName("Should throw an error when getting one session by ID, if user ID or if session is not found")
+    void testParticipateToSession_NotFound() throws Exception {
+        Long notFoundId = 99L;
+        Long mockUserId = userRepository.save(mockUser).getId();
+        teacherRepository.save(mockTeacher);
+        Long mockSessionId = sessionRepository.save(mockSession).getId();
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/session/" + notFoundId + "/participate/" + mockUserId))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/session/" + mockSessionId + "/participate/" + notFoundId))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser(roles="USER")
+    @DisplayName("Should throw when adding user to session if invalid Id format")
+    void testParticipateToSession_InvalidId() throws Exception {
+        Long mockUserId = userRepository.save(mockUser).getId();
+        String invalidId = "invalid_Id";
+        teacherRepository.save(mockTeacher);
+        Long mockSessionId = sessionRepository.save(mockSession).getId();
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/session/" + invalidId + "/participate/" + mockUserId))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/session/" + mockSessionId + "/participate/" + invalidId))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+
+    @Test
+    @WithMockUser(roles="USER")
+    @DisplayName("Should throw when adding participation if user already participate")
+    void testParticipate_AlreadyParticipate() throws Exception {
+        teacherRepository.save(mockTeacher);
+        Long mockUserId = userRepository.save(mockUser).getId();
+        Long mockSessionId = sessionRepository.save(mockSession).getId();
+
+        sessionService.participate(mockSessionId, mockUserId);
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/session/" + mockSessionId + "/participate/" + mockUserId))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(roles="USER")
+    @DisplayName("Should remove user participation successfully if authorized user")
+    void testUnParticipation_ResponseOk() throws Exception {
+        teacherRepository.save(mockTeacher);
+        Long mockSessionId = sessionRepository.save(mockSession).getId();
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/session/" + mockSessionId))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+        assertThat(sessionRepository.findById(mockSessionId).isPresent()).isFalse();
+    }
+
+    @Test
+    @WithMockUser(roles="USER")
+    @DisplayName("Should throw when removing user participation if invalid Id format")
+    void testUnParticipate_InvalidId() throws Exception {
+        Long mockUserId = userRepository.save(mockUser).getId();
+        String invalidId = "invalid_Id";
+        teacherRepository.save(mockTeacher);
+        Long mockSessionId = sessionRepository.save(mockSession).getId();
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/session/" + invalidId + "/participate/" + mockUserId))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/session/" + mockSessionId + "/participate/" + invalidId))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(roles="USER")
+    @DisplayName("Should throw when removing user participation if session is not found")
+    void testUnParticipate_NotFound() throws Exception {
+        Long notFoundId = 99L;
+        Long mockUserId = userRepository.save(mockUser).getId();
+        teacherRepository.save(mockTeacher);
+        //Long mockSessionId = sessionRepository.save(mockSession).getId();
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/session/" + notFoundId + "/participate/" + mockUserId))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+
+    }
+
+    @Test
+    @WithMockUser(roles="USER")
+    @DisplayName("Should throw when removing participation if user already unparticipate")
+    void testUnParticipate_AlreadyUnParticipate() throws Exception {
+        Long mockUserId = userRepository.save(mockUser).getId();
+        teacherRepository.save(mockTeacher);
+        Long mockSessionId = sessionRepository.save(mockSession).getId();
+
+        sessionService.participate(mockSessionId, mockUserId);
+        sessionService.noLongerParticipate(mockSessionId, mockUserId);
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/session/" + mockSessionId + "/participate/" + mockUserId))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+}
