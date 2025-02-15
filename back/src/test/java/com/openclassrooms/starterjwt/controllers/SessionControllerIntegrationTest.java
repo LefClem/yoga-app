@@ -331,7 +331,6 @@ public class SessionControllerIntegrationTest {
         Long notFoundId = 99L;
         Long mockUserId = userRepository.save(mockUser).getId();
         teacherRepository.save(mockTeacher);
-        //Long mockSessionId = sessionRepository.save(mockSession).getId();
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/session/" + notFoundId + "/participate/" + mockUserId))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());

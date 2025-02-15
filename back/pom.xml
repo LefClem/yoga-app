@@ -182,7 +182,6 @@
 						<exclude>**/dto/*</exclude>
 						<exclude>**/models/*</exclude>
 						<exclude>**/payload/**</exclude>
-
 					</excludes>
 				</configuration>
 			</plugin>

@@ -67,10 +67,9 @@ describe('ListComponent', () => {
     mockSessionService.sessionInformation.admin = true;
     fixture.detectChanges();
 
-    // Vérifier si le bouton "Create" est présent
     const createButton = fixture.debugElement.query(By.css('[data-test-id="create-button"]'));
     expect(createButton).toBeTruthy();
-    // Vérifier si le bouton "Edit" est présent
+
     const editButton = fixture.debugElement.query(By.css('[data-test-id="edit-button"]'));
     expect(editButton).toBeTruthy();
 

@@ -90,7 +90,7 @@ describe('FormComponent', () => {
       
     const activatedRoute = TestBed.inject(ActivatedRoute);
     jest.spyOn(router, 'url', 'get').mockReturnValue('/sessions/update');
-    jest.spyOn(activatedRoute.snapshot.paramMap, 'get').mockReturnValue('123'); // Simule l'ID
+    jest.spyOn(activatedRoute.snapshot.paramMap, 'get').mockReturnValue('123'); 
     const initFormSpy = jest.spyOn(component as any, 'initForm');
 
     component.ngOnInit();
@@ -110,6 +110,7 @@ describe('FormComponent', () => {
     expect(component.onUpdate).toBe(false);
     expect(initFormSpy).toHaveBeenCalledWith();
   });
+
   it('should submit update form successfully', () => {
     let sessionApiServiceSpy = jest
       .spyOn(sessionApiService, 'update')
